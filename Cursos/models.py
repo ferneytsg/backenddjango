@@ -34,10 +34,10 @@ class Grados(models.Model):
     nombre = models.CharField(max_length=50, null=False, blank=True)
 
 class Materias(models.Model):
-
-    titulo=models.CharField(max_length=50, null=False, blank=True)
-    subtitulo=models.CharField(max_length=50, null=False, blank=True)
-    descripcion=models.CharField(max_length=50, null=False, blank=True)
+    codigo=models.CharField(max_length=200, null=False, blank=True)
+    titulo=models.CharField(max_length=200, null=False, blank=True)
+    subtitulo=models.CharField(max_length=200, null=False, blank=True)
+    descripcion=models.CharField(max_length=200, null=False, blank=True)
     imagen=models.TextField( null=False, blank=True)
     curso = models.ForeignKey('Cursos.Grados', on_delete=models.CASCADE, null=True, blank=True)
     profesor = models.ForeignKey('Cursos.Profesores', on_delete=models.CASCADE, null=True, blank=True)

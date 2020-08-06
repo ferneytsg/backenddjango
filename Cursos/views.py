@@ -8,7 +8,7 @@ from .serializers import *
 
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, FileUploadParser
-
+from uploadapp import utils
 
 
 class VersionesViewsets(viewsets.ModelViewSet):
@@ -130,6 +130,25 @@ class GradosViewsets(viewsets.ModelViewSet):
 class MateriasViewsets(viewsets.ModelViewSet):
     queryset = Materias.objects.all()
     serializer_class = MateriasSerializers
+
+
+    def create(self, request, *args, **kwargs):
+        #print(utils.coursesList())
+        serializer = MateriasSerializers(data=request.data)
+
+        for i in utils.coursesList():
+            serializer = MateriasSerializers(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                request.data._mutable = True
+                #print((i["id"]))
+                aux = int((i["id"]))
+                request.data['codigo'] =i["id"]
+                print(request.data['codigo'])
+                request.data['titulo'] = i["name"]
+                request.data['imagen'] =i["images"]
+                materias = serializer.save()
+                request.data._mutable = False
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True)
     def curso(self, request, pk=None):
