@@ -231,7 +231,6 @@ class MaterialEstudioViewsets(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def blobmaterialestudio(self, request, pk=None):
-        print(pk)
         try:
             queryset = MaterialEstudio.objects.filter(blob__codigo=pk)
 
