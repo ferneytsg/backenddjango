@@ -4,8 +4,10 @@ from .serializers import *
 
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, MultiPartParser
-from . import utils
-
+from Cursos.utils import coursesList
+from Cursos.utils import createMessageCliente
+from Cursos.utils import createAssignments
+from uploadapp.models import File
 
 class VersionesViewsets(viewsets.ModelViewSet):
     queryset =Versiones.objects.all()
@@ -44,6 +46,7 @@ class VersionesViewsets(viewsets.ModelViewSet):
                 return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
     """
+
 
 
 class EstudiantesViewsets(viewsets.ModelViewSet):
@@ -142,13 +145,33 @@ class MateriasViewsets(viewsets.ModelViewSet):
     queryset = Materias.objects.all()
     serializer_class = MateriasSerializers
 
+    @action(methods=['get'], detail=True)
+    def asignacion(self, request, pk=None):
+        querysetArchivos = File.objects.all().values()
+
+        print(querysetArchivos)
+        for i in querysetArchivos:
+            queryset = Materias.objects.filter(codigo=pk).values()
+            createAssignments(pk, "Tarea react urgente","<p>LLevar codigo</p>","2020-07-29T04:59:00.000Z","el_artde_la_guerra.pdf","./media/")
+
+        return Response(status=status.HTTP_200_OK)
+
+
+    @action(methods=['get'], detail=True)
+    def mensaje(self, request, pk=None):
+        querysetArchivos = File.objects.all().values()
+        print(querysetArchivos)
+        for i in querysetArchivos:
+            queryset = Materias.objects.filter(codigo=pk).values()
+            createMessageCliente(pk, i['file'], "<p>"+i['file']+"</p>", "./media/")
+        return Response(status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         #print(utils.coursesList())
         serializer = MateriasSerializers(data=request.data)
         versiones = Versiones.objects.all().values()
 
-        for i in utils.coursesList():
+        for i in coursesList():
             serializer = MateriasSerializers(data=request.data)
             if serializer.is_valid(raise_exception=True):
 
@@ -278,6 +301,8 @@ class MaterialEstudioViewsets(viewsets.ModelViewSet):
             return Response(serializer_class, status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
 
 
 
