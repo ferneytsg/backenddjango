@@ -1,20 +1,34 @@
 from rest_framework.decorators import action
-from rest_framework.generics import ListAPIView
-from rest_framework.views import APIView
-import requests
-from .models import *
-from rest_framework import viewsets ,generics,status
+from rest_framework import viewsets , status
 from .serializers import *
 
 from rest_framework.response import Response
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser, FileUploadParser
-from uploadapp import utils
+from rest_framework.parsers import JSONParser, MultiPartParser
+from . import utils
 
 
 class VersionesViewsets(viewsets.ModelViewSet):
     queryset =Versiones.objects.all()
     serializer_class = VersionesSerializers
+    #print(queryset)
 
+
+    def create(self, request, *args, **kwargs):
+        print(type(request.data['numero']))
+
+        #request.data._mutable = True
+
+        #request.data._mutable = False
+
+        serializer = VersionesSerializers(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            try:
+                versiones = serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except  Exception:
+                return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+    """
     def create(self, request, *args, **kwargs):
         response = requests.get('https://restcountries.eu/rest/v2/lang/es')
         ejemplo = response.json(*args, **kwargs)
@@ -29,7 +43,7 @@ class VersionesViewsets(viewsets.ModelViewSet):
             except  Exception:
                 return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
-
+    """
 
 
 class EstudiantesViewsets(viewsets.ModelViewSet):
@@ -41,13 +55,14 @@ class DispositivosViewsets(viewsets.ModelViewSet):
     serializer_class = DispositivosSerializers
 
 
-
     def create(self, request, *args, **kwargs):
-
         serializer = DispositivosSerializers(data=request.data)
         if serializer.is_valid(raise_exception=True):
+
             try:
                 dispositivo = serializer.save()
+
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except  Exception:
                 return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
@@ -110,10 +125,6 @@ class DispositivosViewsets(viewsets.ModelViewSet):
 
 
 
-
-
-
-
 class ProfesoresViewsets(viewsets.ModelViewSet):
     queryset = Profesores.objects.all()
     serializer_class = ProfesoresSerializers
@@ -135,10 +146,13 @@ class MateriasViewsets(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         #print(utils.coursesList())
         serializer = MateriasSerializers(data=request.data)
+        versiones = Versiones.objects.all().values()
 
         for i in utils.coursesList():
             serializer = MateriasSerializers(data=request.data)
             if serializer.is_valid(raise_exception=True):
+
+
                 request.data._mutable = True
                 #print((i["id"]))
                 aux = int((i["id"]))
@@ -148,6 +162,13 @@ class MateriasViewsets(viewsets.ModelViewSet):
                 request.data['imagen'] =i["images"]
                 materias = serializer.save()
                 request.data._mutable = False
+
+                for j in versiones:
+                    j['numero'] = j['numero'] + 0.1
+                    print(j['numero'])
+                    Versiones.objects.all().update(numero=j['numero'])
+
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True)

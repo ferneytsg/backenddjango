@@ -1,8 +1,13 @@
+
 import json
 import base64
 import requests
+import os
+
+
 from django.contrib import admin
-token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImE5YWZiODZkLWExZDEtNGIyNi04OTc5LTVjZjJhYjY4ZjViNiJ9.eyJpc3MiOiJodHRwczovL2FwaS5icmlnaHRzcGFjZS5jb20vYXV0aCIsImF1ZCI6Imh0dHBzOi8vYXBpLmJyaWdodHNwYWNlLmNvbS9hdXRoL3Rva2VuIiwiZXhwIjoxNTk2NzUwNDczLCJuYmYiOjE1OTY3NDY4NzMsInN1YiI6IjIwNyIsInRlbmFudGlkIjoiZTUyOTU5N2EtZmQ4NS00YWI0LWI0ZTUtNmUzYjA5OTMyNWI0IiwiYXpwIjoibG1zOmU1Mjk1OTdhLWZkODUtNGFiNC1iNGU1LTZlM2IwOTkzMjViNCIsInNjb3BlIjoiKjoqOioiLCJqdGkiOiIyOTNkYmE1NS03NzgxLTQzYWEtODBmOC1jNDE0YjgzZTE0ZTAifQ.Fnk_Db-7KJjbLg0AuWBf4WKkde_nNtr0g1F7yPSxGWodh4O9NV_EI6S8DjurDBgge1Zsz7cIa8vK8PQ4EfSdIoZFD7-QOlI5objAgsB293V6bxYIgnRNxBCbb-K41cIx4LQH-NryrS-kTj4_GHzq-h9E8cgQIdkjnJw3kJAZpy8joxpuAQpOwo73Ob3U5EZJ_Zj_O3hY0hJrf1HxNcWq6Co9ra9Th4A4FeGXFfrWg7RnDNAktoOPInmWhWBZo_IkcV3hXNY0D0Cf3zLciUL5UQMULmGUzRdJ7OMI0gsDlM1UT0Yw4jErqcMdrfpK-1JhYD3sDtfD7JVXwSrWQamMpw'
+token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImE2YjMyNjk2LTE0ZDMtNDRmZi04ZmNhLTE2Mzc1ODAyYWYxYSJ9.eyJpc3MiOiJodHRwczovL2FwaS5icmlnaHRzcGFjZS5jb20vYXV0aCIsImF1ZCI6Imh0dHBzOi8vYXBpLmJyaWdodHNwYWNlLmNvbS9hdXRoL3Rva2VuIiwiZXhwIjoxNTk3MTY2ODkzLCJuYmYiOjE1OTcxNjMyOTMsInN1YiI6IjIwNyIsInRlbmFudGlkIjoiZTUyOTU5N2EtZmQ4NS00YWI0LWI0ZTUtNmUzYjA5OTMyNWI0IiwiYXpwIjoibG1zOmU1Mjk1OTdhLWZkODUtNGFiNC1iNGU1LTZlM2IwOTkzMjViNCIsInNjb3BlIjoiKjoqOioiLCJqdGkiOiI0MjUwMDRlOS0wNWYwLTQ5MTMtYTZlNC1lN2E2MTYzZjg4ZjYifQ.tD6KLXjrZyUqkroHcw4MgzFGwYVIEGX25PXCfIckD1VorBBynha7h5mTpIVRijhE_6bQN5g8JjHwAXgFRBpxjna5REucMbaDrcNtDQqk2Gx95bkhyRAovGa8YYS3YNAy0tpNumxXw4RseoQ1555_tCkFH9J6OuNelMtl9kuR6-rRe0EkaJ6A3-3MXP2p6jXURLYlSwxxo0I9s03wLX3YK-c99lcV7GC5seGw4R9kXEmn79U9uMZCXadk0Ck-rE9lUJ_acWcLnHh0wxNyub9H8ejxqQ_2BnlWipBP6ZnmnTjsSLLh7ZRjnMOFJtnUVODSQKq7wF_6e3D9ISHknfH3LA'
+
 def createCourse():
     # ********************      Headers  *********************************************
     headers = {'Authorization': 'Bearer ' +
@@ -117,15 +122,23 @@ def createMessage():
 
 # Datos de entrada para crear un mensaje
 #token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImQ5ZDcwY2YzLTU2NzAtNGIyMy1hNDA0LWY2MTgxZWM4OWMzYyJ9.eyJpc3MiOiJodHRwczovL2FwaS5icmlnaHRzcGFjZS5jb20vYXV0aCIsImF1ZCI6Imh0dHBzOi8vYXBpLmJyaWdodHNwYWNlLmNvbS9hdXRoL3Rva2VuIiwiZXhwIjoxNTk2NjgwODA2LCJuYmYiOjE1OTY2NzcyMDYsInN1YiI6IjIwNyIsInRlbmFudGlkIjoiZTUyOTU5N2EtZmQ4NS00YWI0LWI0ZTUtNmUzYjA5OTMyNWI0IiwiYXpwIjoibG1zOmU1Mjk1OTdhLWZkODUtNGFiNC1iNGU1LTZlM2IwOTkzMjViNCIsInNjb3BlIjoiKjoqOioiLCJqdGkiOiI1YmM1NTNkMy1lYWQ3LTQzMzUtYTQ5MS05MmQzOThmN2RjNjQifQ.MrmB51si__io_tzgtClkHlvJEMoljrwvJ4p1DVOJ2NBDTeAechqAX0mfTiByyH0EenHALJEvv1dPVwtxirEzU2LoJPOsRUcQPMJ0INQHl96i5qNGbbKELuDAj1wkY8mZrJH1u7SIJG5CzGM6WvNhP8eAWswtQ7eVdfzikzWRZeBWkE3Ru-kODPcv5W1aQi4FL0bqsYE19ta9iqh-dZJkPeSOGF5BwQ9I-yHyHm-zftae_57-VYfBRV70zZuUugozAqYrHI-ixGuP-QZlgL-eJhmgp51fTJaFtbUZXrsi_fgAShMvyy96IJJP9XNUTfBJwL-3h3YInt8iMTVeEgYyVg'
-idCurso = "6751"
+idCurso = "6658"
+#Mensaje creado por nosotros
+
+
 mensaje = "<p>Mensaje para alumnos</p>"
 
-nombreArchivo = "tsg.pdf"
-carpetaArchivo = "D:/Archivos andres/Descargas/backenddjango-master/backenddjango-master/"
+nombreArchivo = "el_artde_la_guerra.pdf"
+carpetaArchivo = "../media/"
+
+#carpetaArchivo = "C:/Users/Ferney/Documents/GitHub/gobernacion_env/gobernacion/media/"
 urlArchivo = carpetaArchivo + nombreArchivo
 # ***********************************************
 
-# createMessage()
+#createMessage()
+
+
+#cursosClientes()
 
 
 def createAssignments():
