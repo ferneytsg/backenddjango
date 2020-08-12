@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'Users',
     'Cursos',
     'uploadapp',
-    'd2lvalence',
 ]
 
 SITE_ID=1
